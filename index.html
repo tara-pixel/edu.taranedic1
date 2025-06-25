@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduBot - Asistent za nastavu</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}">
+</head>
+<body>
+    <div class="chat-container">
+        <h2>EduBot</h2>
+        <div id="chat-box"></div>
+        <input type="text" id="user-input" placeholder="Unesi poruku...">
+        <button onclick="sendMessage()">Posalji</button>
+    </div>
+    <script>
+        async function sendMessage(){
+            const input = document.getElementById("user-input");
+            const message = input.value;
+            appendMessage("Ti",message);
+            input.value = "";
+
+            const response = await fetch("/chat", {
+                method:"POST",
+                headers:{"Content-Type":"application/json"},
+                body: JSON.stringify({message:message})
+            });
+
+            const data=await response.json();
+            appendMessage("EduBot",data.response);
+        }
+        function appendMessage(sender,message) {
+            const box = document.getElementById("chat-box");
+            const newMsg =document.createElement("p");
+            newMsg.innerHTML = `<strong>${sender}:</strong> ${message}`;
+            box.appendChild(newMsg);
+        }
+    </script>
+</body>
+</html>
